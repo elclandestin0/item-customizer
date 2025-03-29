@@ -13,17 +13,9 @@ interface CharacterProps {
 
 // VoxelCharacter component to render the 3D character and its equipment
 const VoxelCharacter = ({ equippedItems }: { equippedItems: Record<string, Item | null> }) => {
-  const characterRef = useRef<THREE.Group>(null);
-  
-  // Rotate the character slightly each frame
-  useFrame((state, delta) => {
-    if (characterRef.current) {
-      characterRef.current.rotation.y += delta * 0.3;
-    }
-  });
-
+  // Character should NOT rotate automatically, just be controllable with OrbitControls
   return (
-    <group ref={characterRef}>
+    <group>
       {/* Base Character */}
       <group>
         {/* Head */}
@@ -152,9 +144,22 @@ const Character = ({ characterId, equippedItems }: CharacterProps) => {
           camera={{ position: [0, 1, 5], fov: 50 }}
           style={{ background: '#111a2c' }}
         >
-          <ambientLight intensity={0.5} />
+          {/* Enhanced lighting for character */}
+          <ambientLight intensity={0.6} />
           <pointLight position={[10, 10, 10]} intensity={0.8} />
           <pointLight position={[-10, -10, -10]} intensity={0.5} />
+          <spotLight
+            position={[0, 5, 5]}
+            angle={0.3}
+            penumbra={1}
+            intensity={1}
+            castShadow
+          />
+          <directionalLight 
+            position={[5, 5, 5]} 
+            intensity={0.5}
+            castShadow
+          />
           
           <VoxelCharacter equippedItems={equippedItems} />
           

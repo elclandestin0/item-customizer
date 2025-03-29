@@ -1,8 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Item, fetchItems } from "@/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -13,6 +13,15 @@ interface ItemGridProps {
 
 // VoxelItem component for rendering a single item in 3D
 const VoxelItem = ({ type }: { type: string }) => {
+  const itemRef = useRef<THREE.Group>(null);
+  
+  // Add rotation animation
+  useFrame((state, delta) => {
+    if (itemRef.current) {
+      itemRef.current.rotation.y += delta * 1; // Rotate continuously
+    }
+  });
+
   // Set up different geometries based on item type
   const getItemMesh = () => {
     switch (type) {
@@ -81,7 +90,7 @@ const VoxelItem = ({ type }: { type: string }) => {
   };
 
   return (
-    <group rotation={[0, Math.PI / 4, 0]}>
+    <group ref={itemRef}>
       {getItemMesh()}
     </group>
   );
@@ -125,8 +134,18 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
               camera={{ position: [0, 0, 3], fov: 40 }}
               style={{ background: selectedItemId === item.id ? '#563b6a' : '#222738' }}
             >
+              {/* Enhanced lighting */}
               <ambientLight intensity={0.5} />
-              <pointLight position={[5, 5, 5]} intensity={0.8} />
+              <pointLight position={[5, 5, 5]} intensity={1} />
+              <pointLight position={[-5, -5, -5]} intensity={0.5} />
+              <spotLight
+                position={[0, 5, 5]}
+                angle={0.3}
+                penumbra={1}
+                intensity={1}
+                castShadow
+              />
+              
               <VoxelItem type={item.type} />
               <OrbitControls 
                 enableZoom={false}
