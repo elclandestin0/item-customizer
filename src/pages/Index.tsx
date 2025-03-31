@@ -1,12 +1,11 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Item, equipItem, unequipItem } from "@/services/apiService";
 import Character from "@/components/Character";
 import ItemGrid from "@/components/ItemGrid";
 import ItemDetails from "@/components/ItemDetails";
+import { Filter, SlidersHorizontal } from "lucide-react";
 
 const Index = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -53,102 +52,42 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4">
-      <div className="pixel-container">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Pixel Gear Selector</h1>
-          <p className="text-muted-foreground">Customize your character with unique gear</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-blue-950 py-4 px-4">
+      <div className="max-w-7xl mx-auto">
+        <header className="mb-6 flex items-center">
+          <h1 className="text-4xl font-bold text-white mr-4">Outfit</h1>
+          <div className="ml-auto flex gap-2">
+            <button className="bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-4 rounded">
+              SORT: SEASON
+            </button>
+            <button className="bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-4 rounded">
+              FILTER: ALL
+            </button>
+          </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="md:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-2 space-y-4">
+            <ItemGrid 
+              onSelectItem={handleSelectItem} 
+              selectedItemId={selectedItem?.id || null} 
+            />
+            
+            <div className="flex justify-between">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 text-lg rounded-sm flex-1 mr-2">
+                EDIT STYLE
+              </button>
+              <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 text-lg rounded-sm flex-1 ml-2">
+                EQUIP
+              </button>
+            </div>
+          </div>
+          
+          <div className="md:col-span-1 bg-gradient-to-b from-blue-800 to-blue-900 rounded-sm min-h-[600px] p-4">
             <Character 
               characterId={characterId} 
               equippedItems={equippedItems} 
             />
-          </div>
-          
-          <div className="md:col-span-2 space-y-6">
-            <Tabs defaultValue="inventory" className="w-full">
-              <TabsList className="w-full grid grid-cols-2">
-                <TabsTrigger value="inventory">Inventory</TabsTrigger>
-                <TabsTrigger value="stats">Character Stats</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="inventory" className="space-y-4 mt-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="md:col-span-2">
-                    <ItemGrid 
-                      onSelectItem={handleSelectItem} 
-                      selectedItemId={selectedItem?.id || null} 
-                    />
-                  </div>
-                  
-                  <div className="md:col-span-1">
-                    <ItemDetails 
-                      item={selectedItem} 
-                      isEquipped={isItemEquipped(selectedItem)}
-                      onEquip={handleEquipItem}
-                      onUnequip={handleUnequipItem}
-                    />
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="stats">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Character Stats</CardTitle>
-                    <CardDescription>Current attributes and abilities</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <h3 className="text-sm font-semibold">Attack</h3>
-                          <div className="h-2 bg-gray-700 rounded-full">
-                            <div className="h-full bg-pixel-red rounded-full" style={{ width: "40%" }}></div>
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <h3 className="text-sm font-semibold">Defense</h3>
-                          <div className="h-2 bg-gray-700 rounded-full">
-                            <div className="h-full bg-pixel-blue rounded-full" style={{ width: "60%" }}></div>
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <h3 className="text-sm font-semibold">Magic</h3>
-                          <div className="h-2 bg-gray-700 rounded-full">
-                            <div className="h-full bg-pixel-purple rounded-full" style={{ width: "30%" }}></div>
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <h3 className="text-sm font-semibold">Speed</h3>
-                          <div className="h-2 bg-gray-700 rounded-full">
-                            <div className="h-full bg-pixel-green rounded-full" style={{ width: "50%" }}></div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="pt-4">
-                        <h3 className="text-sm font-semibold mb-2">Equipped Items</h3>
-                        <div className="grid grid-cols-2 gap-2 text-sm">
-                          {Object.entries(equippedItems).map(([type, item]) => (
-                            <div key={type} className="flex items-center justify-between">
-                              <span className="capitalize">{type}:</span>
-                              <span className="font-medium">{item ? item.name : "None"}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
           </div>
         </div>
       </div>
