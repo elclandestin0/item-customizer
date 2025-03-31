@@ -13,7 +13,7 @@ interface ItemDetailsProps {
 const ItemDetails = ({ item, isEquipped, onEquip, onUnequip }: ItemDetailsProps) => {
   if (!item) {
     return (
-      <div className="p-4 bg-gradient-to-b from-blue-800 to-blue-900 rounded-sm h-full">
+      <div className="p-4 bg-gradient-to-b from-blue-800 to-blue-900 rounded-sm">
         <h3 className="text-xl font-bold text-white mb-2">Select an Item</h3>
         <p className="text-blue-200">Click on an item to view its details</p>
       </div>
@@ -21,7 +21,7 @@ const ItemDetails = ({ item, isEquipped, onEquip, onUnequip }: ItemDetailsProps)
   }
 
   return (
-    <div className="bg-gradient-to-b from-blue-800 to-blue-900 rounded-sm p-4 h-full">
+    <div className="bg-gradient-to-b from-blue-800 to-blue-900 rounded-sm p-4">
       <h3 className="text-xl font-bold text-white capitalize mb-1">{item.name}</h3>
       <p className="text-blue-300 capitalize mb-4">{item.type}</p>
       

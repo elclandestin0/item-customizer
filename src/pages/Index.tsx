@@ -8,15 +8,8 @@ import ItemDetails from "@/components/ItemDetails";
 
 const Index = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const [equippedItems, setEquippedItems] = useState<Record<string, Item | null>>({
-    head: null,
-    body: null,
-    weapon: null,
-    shield: null,
-    feet: null,
-    accessory: null
-  });
-  
+  const [equippedItems, setEquippedItems] = useState<Record<string, number | null>>({});
+
   const characterId = 1; // Hardcoded for simplicity
 
   // Load character data on initial render
@@ -41,7 +34,7 @@ const Index = () => {
       // Update local state immediately
       setEquippedItems(prev => ({
         ...prev,
-        [item.type]: item
+        [item.type]: item.id
       }));
       toast.success(`${item.name} equipped successfully!`);
     }
@@ -61,7 +54,7 @@ const Index = () => {
 
   const isItemEquipped = (item: Item | null) => {
     if (!item) return false;
-    return equippedItems[item.type]?.id === item.id;
+    return equippedItems[item.type] === item.id;
   };
 
   return (

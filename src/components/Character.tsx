@@ -7,11 +7,11 @@ import { OrbitControls } from "@react-three/drei";
 
 interface CharacterProps {
   characterId: number;
-  equippedItems: Record<string, Item | null>;
+  equippedItems: Record<string, number | null>;
 }
 
 // VoxelCharacter component to render the 3D character and its equipment
-const VoxelCharacter = ({ equippedItems }: { equippedItems: Record<string, Item | null> }) => {
+const VoxelCharacter = ({ equippedItems }: { equippedItems: Record<string, number | null> }) => {
   // Character should NOT rotate automatically, just be controllable with OrbitControls
   return (
     <group>

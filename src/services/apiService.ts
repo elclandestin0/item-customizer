@@ -18,7 +18,7 @@ export interface Character {
   id: number;
   name: string;
   level: number;
-  equippedItems: Record<string, Item>
+  equippedItems: Record<string, number>
 }
 
 // API endpoints would be defined here
