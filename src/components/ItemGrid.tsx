@@ -139,13 +139,13 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
         {items.map((item) => (
           <div
             key={item.id}
-            className={`fortnite-item-cell overflow-hidden ${selectedItemId === item.id ? "ring-2 ring-blue-400" : ""}`}
+            className={`fortnite-item-cell ${selectedItemId === item.id ? "selected" : ""}`}
             onClick={() => onSelectItem(item)}
           >
             <div className="w-full h-full relative">
               <Canvas 
                 camera={{ position: [0, 0, 3], fov: 40 }}
-                style={{ background: 'linear-gradient(to bottom, #1e40af, #7e22ce)' }}
+                className="!bg-transparent"
               >
                 {/* Enhanced lighting */}
                 <ambientLight intensity={0.7} />
@@ -167,7 +167,6 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
                 />
               </Canvas>
               
-              <div className="absolute bottom-0 left-0 right-0 h-1/4 bg-gradient-to-t from-[#7e22ce] to-transparent pointer-events-none" />
               <div className="absolute bottom-0 left-0 right-0 bg-[#7e22ce] h-6">
                 <p className="text-xs text-white font-bold truncate px-1">{item.name}</p>
               </div>

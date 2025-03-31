@@ -61,11 +61,15 @@
   button {
     @apply transition-all duration-100;
   }
+  
+  canvas {
+    @apply !outline-none !border-0;
+  }
 }
 
 @layer components {
   .fortnite-item-cell {
-    @apply bg-gradient-to-b from-blue-700 to-purple-700 aspect-square cursor-pointer rounded-sm overflow-hidden relative hover:brightness-110 transition-all;
+    @apply bg-gradient-to-b from-blue-700 to-purple-700 aspect-square cursor-pointer overflow-hidden relative hover:brightness-110 transition-all;
   }
   
   .fortnite-item-cell.selected {

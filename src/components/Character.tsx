@@ -142,7 +142,7 @@ const Character = ({ characterId, equippedItems }: CharacterProps) => {
       <div className="relative flex-grow">
         <Canvas
           camera={{ position: [0, 1, 5], fov: 50 }}
-          style={{ background: '#0369a1' }}
+          className="!bg-transparent"
         >
           {/* Enhanced lighting for character */}
           <ambientLight intensity={0.7} />
@@ -170,12 +170,6 @@ const Character = ({ characterId, equippedItems }: CharacterProps) => {
             enablePan={false}
           />
         </Canvas>
-      </div>
-      
-      <div className="mt-4 flex justify-center">
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 text-lg rounded-md">
-          EQUIP
-        </button>
       </div>
     </div>
   );

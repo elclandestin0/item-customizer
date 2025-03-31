@@ -73,11 +73,8 @@ const Index = () => {
               selectedItemId={selectedItem?.id || null} 
             />
             
-            <div className="flex justify-between">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 text-lg rounded-sm flex-1 mr-2">
-                EDIT STYLE
-              </button>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 text-lg rounded-sm flex-1 ml-2">
+            <div className="flex justify-center">
+              <button className="fortnite-button px-12">
                 EQUIP
               </button>
             </div>
