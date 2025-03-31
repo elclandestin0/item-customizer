@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import { Search } from "lucide-react";
 
 interface ItemGridProps {
   onSelectItem: (item: Item) => void;
@@ -123,57 +122,44 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <Search className="h-5 w-5 text-gray-400" />
-        </div>
-        <input 
-          type="text" 
-          className="w-full bg-blue-950 border-none text-white pl-10 py-2 rounded focus:ring-blue-500 focus:border-blue-500" 
-          placeholder="Search items..." 
-        />
-      </div>
-    
-      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className={`fortnite-item-cell ${selectedItemId === item.id ? "selected" : ""}`}
-            onClick={() => onSelectItem(item)}
-          >
-            <div className="w-full h-full relative">
-              <Canvas 
-                camera={{ position: [0, 0, 3], fov: 40 }}
-                className="!bg-transparent"
-              >
-                {/* Enhanced lighting */}
-                <ambientLight intensity={0.7} />
-                <pointLight position={[5, 5, 5]} intensity={1} />
-                <pointLight position={[-5, -5, -5]} intensity={0.5} />
-                <spotLight
-                  position={[0, 5, 5]}
-                  angle={0.3}
-                  penumbra={1}
-                  intensity={1}
-                  castShadow
-                />
-                
-                <VoxelItem type={item.type} />
-                <OrbitControls 
-                  enableZoom={false}
-                  enablePan={false}
-                  enableRotate={false}
-                />
-              </Canvas>
+    <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+      {items.map((item) => (
+        <div
+          key={item.id}
+          className={`fortnite-item-cell ${selectedItemId === item.id ? "selected" : ""}`}
+          onClick={() => onSelectItem(item)}
+        >
+          <div className="w-full h-full relative">
+            <Canvas 
+              camera={{ position: [0, 0, 3], fov: 40 }}
+              className="!bg-transparent"
+            >
+              {/* Enhanced lighting */}
+              <ambientLight intensity={0.7} />
+              <pointLight position={[5, 5, 5]} intensity={1} />
+              <pointLight position={[-5, -5, -5]} intensity={0.5} />
+              <spotLight
+                position={[0, 5, 5]}
+                angle={0.3}
+                penumbra={1}
+                intensity={1}
+                castShadow
+              />
               
-              <div className="absolute bottom-0 left-0 right-0 bg-[#7e22ce] h-6">
-                <p className="text-xs text-white font-bold truncate px-1">{item.name}</p>
-              </div>
+              <VoxelItem type={item.type} />
+              <OrbitControls 
+                enableZoom={false}
+                enablePan={false}
+                enableRotate={false}
+              />
+            </Canvas>
+            
+            <div className="absolute bottom-0 left-0 right-0 bg-[#7e22ce] h-6">
+              <p className="text-xs text-white font-bold truncate px-1">{item.name}</p>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 };

@@ -5,7 +5,6 @@ import { Item, equipItem, unequipItem } from "@/services/apiService";
 import Character from "@/components/Character";
 import ItemGrid from "@/components/ItemGrid";
 import ItemDetails from "@/components/ItemDetails";
-import { Filter, SlidersHorizontal } from "lucide-react";
 
 const Index = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -55,15 +54,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-900 to-blue-950 py-4 px-4">
       <div className="max-w-7xl mx-auto">
         <header className="mb-6 flex items-center">
-          <h1 className="text-4xl font-bold text-white mr-4">Outfit</h1>
-          <div className="ml-auto flex gap-2">
-            <button className="bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-4 rounded">
-              SORT: SEASON
-            </button>
-            <button className="bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-4 rounded">
-              FILTER: ALL
-            </button>
-          </div>
+          <h1 className="text-4xl font-bold text-white">Outfit</h1>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
