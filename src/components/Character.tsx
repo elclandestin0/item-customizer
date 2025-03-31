@@ -128,7 +128,7 @@ const Character = ({ characterId, equippedItems }: CharacterProps) => {
   }, [characterId]);
 
   if (loading) {
-    return <Skeleton className="w-full h-64 rounded-md" />;
+    return <Skeleton className="w-full h-64 rounded-none" />;
   }
 
   if (!character) {
@@ -136,16 +136,16 @@ const Character = ({ characterId, equippedItems }: CharacterProps) => {
   }
 
   return (
-    <div className="pixel-border bg-pixel-white p-4 flex flex-col items-center">
-      <h2 className="text-xl font-bold mb-4">{character.name} - Level {character.level}</h2>
+    <div className="w-full h-full flex flex-col">
+      <h2 className="text-2xl font-bold text-white mb-2">{character.name} - Level {character.level}</h2>
       
-      <div className="relative w-full h-64">
+      <div className="relative flex-grow">
         <Canvas
           camera={{ position: [0, 1, 5], fov: 50 }}
-          style={{ background: '#111a2c' }}
+          className="!bg-transparent"
         >
           {/* Enhanced lighting for character */}
-          <ambientLight intensity={0.6} />
+          <ambientLight intensity={0.7} />
           <pointLight position={[10, 10, 10]} intensity={0.8} />
           <pointLight position={[-10, -10, -10]} intensity={0.5} />
           <spotLight
@@ -169,7 +169,6 @@ const Character = ({ characterId, equippedItems }: CharacterProps) => {
             minPolarAngle={Math.PI / 4}
             enablePan={false}
           />
-          <gridHelper args={[10, 10, `#444444`, `#222222`]} />
         </Canvas>
       </div>
     </div>

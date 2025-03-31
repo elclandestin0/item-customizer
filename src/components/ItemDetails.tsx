@@ -1,6 +1,5 @@
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Item } from "@/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -14,61 +13,56 @@ interface ItemDetailsProps {
 const ItemDetails = ({ item, isEquipped, onEquip, onUnequip }: ItemDetailsProps) => {
   if (!item) {
     return (
-      <Card className="h-full">
-        <CardHeader>
-          <CardTitle>Select an Item</CardTitle>
-          <CardDescription>Click on an item to view its details</CardDescription>
-        </CardHeader>
-      </Card>
+      <div className="p-4 bg-gradient-to-b from-blue-800 to-blue-900 rounded-sm h-full">
+        <h3 className="text-xl font-bold text-white mb-2">Select an Item</h3>
+        <p className="text-blue-200">Click on an item to view its details</p>
+      </div>
     );
   }
 
   return (
-    <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="capitalize">{item.name}</CardTitle>
-        <CardDescription className="capitalize">{item.type}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-4">{item.description}</p>
-        
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold">Stats:</h3>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            {item.stats.attack && (
-              <div>Attack: <span className="font-semibold text-pixel-red">+{item.stats.attack}</span></div>
-            )}
-            {item.stats.defense && (
-              <div>Defense: <span className="font-semibold text-pixel-blue">+{item.stats.defense}</span></div>
-            )}
-            {item.stats.magic && (
-              <div>Magic: <span className="font-semibold text-pixel-purple">+{item.stats.magic}</span></div>
-            )}
-            {item.stats.speed && (
-              <div>Speed: <span className="font-semibold text-pixel-green">+{item.stats.speed}</span></div>
-            )}
-          </div>
+    <div className="bg-gradient-to-b from-blue-800 to-blue-900 rounded-sm p-4 h-full">
+      <h3 className="text-xl font-bold text-white capitalize mb-1">{item.name}</h3>
+      <p className="text-blue-300 capitalize mb-4">{item.type}</p>
+      
+      <p className="text-white mb-4">{item.description}</p>
+      
+      <div className="space-y-2">
+        <h4 className="text-sm font-bold text-white">Stats:</h4>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          {item.stats.attack && (
+            <div className="text-white">Attack: <span className="font-semibold text-red-400">+{item.stats.attack}</span></div>
+          )}
+          {item.stats.defense && (
+            <div className="text-white">Defense: <span className="font-semibold text-blue-400">+{item.stats.defense}</span></div>
+          )}
+          {item.stats.magic && (
+            <div className="text-white">Magic: <span className="font-semibold text-purple-400">+{item.stats.magic}</span></div>
+          )}
+          {item.stats.speed && (
+            <div className="text-white">Speed: <span className="font-semibold text-green-400">+{item.stats.speed}</span></div>
+          )}
         </div>
-      </CardContent>
-      <CardFooter>
+      </div>
+      
+      <div className="mt-6">
         {isEquipped ? (
-          <Button 
-            variant="outline" 
-            className="w-full" 
+          <button 
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 text-lg rounded-sm"
             onClick={() => onUnequip(item)}
           >
-            Unequip
-          </Button>
+            UNEQUIP
+          </button>
         ) : (
-          <Button 
-            className="w-full pixel-btn" 
+          <button 
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 text-lg rounded-sm"
             onClick={() => onEquip(item)}
           >
-            Equip
-          </Button>
+            EQUIP
+          </button>
         )}
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 };
 
