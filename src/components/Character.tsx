@@ -2,9 +2,8 @@
 import { useEffect, useState, useRef } from "react";
 import { Character as CharacterType, fetchCharacter, Item } from "@/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import * as THREE from "three";
 
 interface CharacterProps {
   characterId: number;
@@ -112,7 +111,7 @@ const VoxelCharacter = ({ equippedItems }: { equippedItems: Record<string, Item 
   );
 };
 
-const Character = ({ characterId, equippedItems }: CharacterProps) => {
+const Character = ({ characterId }: CharacterProps) => {
   const [character, setCharacter] = useState<CharacterType | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -161,7 +160,7 @@ const Character = ({ characterId, equippedItems }: CharacterProps) => {
             castShadow
           />
           
-          <VoxelCharacter equippedItems={equippedItems} />
+          <VoxelCharacter equippedItems={character.equippedItems} />
           
           <OrbitControls 
             enableZoom={true}
