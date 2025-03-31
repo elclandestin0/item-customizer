@@ -51,10 +51,10 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-blue-950 py-4 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-blue-800 to-blue-900 py-4 px-4">
       <div className="max-w-7xl mx-auto">
         <header className="mb-6 flex items-center">
-          <h1 className="text-4xl font-bold text-white">Outfit</h1>
+          <h1 className="text-4xl font-bold text-white">Item Selector</h1>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -71,7 +71,7 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="md:col-span-1 bg-gradient-to-b from-blue-800 to-blue-900 rounded-sm min-h-[600px] p-4">
+          <div className="md:col-span-1 from-blue-800 to-blue-900 rounded-sm min-h-[600px] p-4">
             <Character 
               characterId={characterId} 
               equippedItems={equippedItems} 
