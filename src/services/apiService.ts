@@ -88,15 +88,15 @@ const mockCharacter: Character = {
 };
 
 // API endpoints would be defined here
-const API_BASE_URL = "/api";
+const API_BASE_URL = "http://localhost:4000/api";
 
 // Function to fetch all available items
 export const fetchItems = async (): Promise<Item[]> => {
   try {
     // This would be a real API call in production
-    // const response = await fetch(`${API_BASE_URL}/items`);
-    // if (!response.ok) throw new Error('Failed to fetch items');
-    // return await response.json();
+    const response = await fetch(`${API_BASE_URL}/items`);
+    if (!response.ok) throw new Error('Failed to fetch items');
+    return await response.json();
     
     // Using mock data for now
     return new Promise((resolve) => {
@@ -113,9 +113,9 @@ export const fetchItems = async (): Promise<Item[]> => {
 export const fetchCharacter = async (characterId: number): Promise<Character | null> => {
   try {
     // This would be a real API call in production
-    // const response = await fetch(`${API_BASE_URL}/character/${characterId}`);
-    // if (!response.ok) throw new Error('Failed to fetch character');
-    // return await response.json();
+    const response = await fetch(`${API_BASE_URL}/character/${characterId}`);
+    if (!response.ok) throw new Error('Failed to fetch character');
+    return await response.json();
     
     // Using mock data for now
     return new Promise((resolve) => {
@@ -132,13 +132,13 @@ export const fetchCharacter = async (characterId: number): Promise<Character | n
 export const equipItem = async (characterId: number, itemType: string, itemId: number): Promise<boolean> => {
   try {
     // This would be a real API call in production
-    // const response = await fetch(`${API_BASE_URL}/character/${characterId}/equip`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ itemType, itemId })
-    // });
-    // if (!response.ok) throw new Error('Failed to equip item');
-    // return true;
+    const response = await fetch(`${API_BASE_URL}/character/${characterId}/equip`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemType, itemId })
+    });
+    if (!response.ok) throw new Error('Failed to equip item');
+    return true;
     
     // Mock implementation
     return new Promise((resolve) => {
@@ -161,13 +161,13 @@ export const equipItem = async (characterId: number, itemType: string, itemId: n
 export const unequipItem = async (characterId: number, itemType: string): Promise<boolean> => {
   try {
     // This would be a real API call in production
-    // const response = await fetch(`${API_BASE_URL}/character/${characterId}/unequip`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ itemType })
-    // });
-    // if (!response.ok) throw new Error('Failed to unequip item');
-    // return true;
+    const response = await fetch(`${API_BASE_URL}/character/${characterId}/unequip`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemType })
+    });
+    if (!response.ok) throw new Error('Failed to unequip item');
+    return true;
     
     // Mock implementation
     return new Promise((resolve) => {
