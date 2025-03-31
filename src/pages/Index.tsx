@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Item, equipItem, unequipItem } from "@/services/apiService";
+import { Item, equipItem, unequipItem, fetchCharacter } from "@/services/apiService";
 import Character from "@/components/Character";
 import ItemGrid from "@/components/ItemGrid";
 import ItemDetails from "@/components/ItemDetails";
@@ -19,6 +19,18 @@ const Index = () => {
   
   const characterId = 1; // Hardcoded for simplicity
 
+  // Load character data on initial render
+  useEffect(() => {
+    const loadCharacter = async () => {
+      const fetchedCharacter = await fetchCharacter(characterId);
+      if (fetchedCharacter && fetchedCharacter.equippedItems) {
+        setEquippedItems(fetchedCharacter.equippedItems);
+      }
+    };
+
+    loadCharacter();
+  }, [characterId]);
+
   const handleSelectItem = (item: Item) => {
     setSelectedItem(item);
   };
@@ -26,6 +38,7 @@ const Index = () => {
   const handleEquipItem = async (item: Item) => {
     const success = await equipItem(characterId, item.type, item.id);
     if (success) {
+      // Update local state immediately
       setEquippedItems(prev => ({
         ...prev,
         [item.type]: item
@@ -37,6 +50,7 @@ const Index = () => {
   const handleUnequipItem = async (item: Item) => {
     const success = await unequipItem(characterId, item.type);
     if (success) {
+      // Update local state immediately
       setEquippedItems(prev => ({
         ...prev,
         [item.type]: null

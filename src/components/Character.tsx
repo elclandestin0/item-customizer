@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { Character as CharacterType, fetchCharacter, Item } from "@/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Canvas } from "@react-three/fiber";
@@ -111,11 +111,12 @@ const VoxelCharacter = ({ equippedItems }: { equippedItems: Record<string, Item 
   );
 };
 
-const Character = ({ characterId }: CharacterProps) => {
+const Character = ({ characterId, equippedItems }: CharacterProps) => {
   const [character, setCharacter] = useState<CharacterType | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  // Fetch character data for name and level, but use the provided equippedItems
+  useState(() => {
     const loadCharacter = async () => {
       setLoading(true);
       const fetchedCharacter = await fetchCharacter(characterId);
@@ -124,7 +125,7 @@ const Character = ({ characterId }: CharacterProps) => {
     };
 
     loadCharacter();
-  }, [characterId]);
+  });
 
   if (loading) {
     return <Skeleton className="w-full h-64 rounded-none" />;
@@ -160,7 +161,7 @@ const Character = ({ characterId }: CharacterProps) => {
             castShadow
           />
           
-          <VoxelCharacter equippedItems={character.equippedItems} />
+          <VoxelCharacter equippedItems={equippedItems} />
           
           <OrbitControls 
             enableZoom={true}
