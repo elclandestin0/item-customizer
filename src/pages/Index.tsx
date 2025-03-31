@@ -64,11 +64,14 @@ const Index = () => {
               selectedItemId={selectedItem?.id || null} 
             />
             
-            <div className="flex justify-center">
-              <button className="fortnite-button px-12">
-                EQUIP
-              </button>
-            </div>
+            {selectedItem && (
+              <ItemDetails 
+                item={selectedItem}
+                isEquipped={isItemEquipped(selectedItem)}
+                onEquip={handleEquipItem}
+                onUnequip={handleUnequipItem}
+              />
+            )}
           </div>
           
           <div className="md:col-span-1 from-blue-800 to-blue-900 rounded-sm min-h-[600px] p-4">
