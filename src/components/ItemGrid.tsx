@@ -1,10 +1,10 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Item, fetchItems } from "@/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+import { useContract } from "@/context/ContractContext";
 
 interface ItemGridProps {
   onSelectItem: (item: Item) => void;
@@ -12,7 +12,7 @@ interface ItemGridProps {
 }
 
 // VoxelItem component for rendering a single item in 3D
-const VoxelItem = ({ type }: { type: string }) => {
+const VoxelItem = ({ type, isOwned }: { type: string; isOwned: boolean }) => {
   const itemRef = useRef<THREE.Group>(null);
   
   // Add rotation animation
@@ -24,19 +24,23 @@ const VoxelItem = ({ type }: { type: string }) => {
 
   // Set up different geometries based on item type
   const getItemMesh = () => {
+    const materialProps = isOwned 
+      ? { color: "#FFFFFF" }
+      : { color: "#666666", transparent: true, opacity: 0.5 };
+
     switch (type) {
       case "head":
         return (
           <mesh>
             <boxGeometry args={[0.8, 0.5, 0.8]} />
-            <meshStandardMaterial color="#0044FF" />
+            <meshStandardMaterial {...materialProps} />
           </mesh>
         );
       case "body":
         return (
           <mesh>
             <boxGeometry args={[1, 1.2, 0.4]} />
-            <meshStandardMaterial color="#6633AA" />
+            <meshStandardMaterial {...materialProps} />
           </mesh>
         );
       case "weapon":
@@ -44,11 +48,11 @@ const VoxelItem = ({ type }: { type: string }) => {
           <group>
             <mesh position={[0, 0.6, 0]}>
               <boxGeometry args={[0.2, 0.8, 0.2]} />
-              <meshStandardMaterial color="#FF2222" />
+              <meshStandardMaterial {...materialProps} />
             </mesh>
             <mesh position={[0, 0, 0]}>
               <boxGeometry args={[0.5, 0.2, 0.1]} />
-              <meshStandardMaterial color="#AA2222" />
+              <meshStandardMaterial {...materialProps} />
             </mesh>
           </group>
         );
@@ -56,7 +60,7 @@ const VoxelItem = ({ type }: { type: string }) => {
         return (
           <mesh>
             <boxGeometry args={[0.1, 0.8, 0.8]} />
-            <meshStandardMaterial color="#FFCC00" />
+            <meshStandardMaterial {...materialProps} />
           </mesh>
         );
       case "feet":
@@ -64,11 +68,11 @@ const VoxelItem = ({ type }: { type: string }) => {
           <group>
             <mesh position={[-0.25, 0, 0]}>
               <boxGeometry args={[0.3, 0.2, 0.5]} />
-              <meshStandardMaterial color="#33AA55" />
+              <meshStandardMaterial {...materialProps} />
             </mesh>
             <mesh position={[0.25, 0, 0]}>
               <boxGeometry args={[0.3, 0.2, 0.5]} />
-              <meshStandardMaterial color="#33AA55" />
+              <meshStandardMaterial {...materialProps} />
             </mesh>
           </group>
         );
@@ -76,14 +80,14 @@ const VoxelItem = ({ type }: { type: string }) => {
         return (
           <mesh>
             <sphereGeometry args={[0.4, 8, 8]} />
-            <meshStandardMaterial color="#AAAAAA" emissive="#333333" />
+            <meshStandardMaterial {...materialProps} emissive={isOwned ? "#333333" : "#111111"} />
           </mesh>
         );
       default:
         return (
           <mesh>
             <boxGeometry args={[0.5, 0.5, 0.5]} />
-            <meshStandardMaterial color="#FFFFFF" />
+            <meshStandardMaterial {...materialProps} />
           </mesh>
         );
     }
@@ -99,6 +103,9 @@ const VoxelItem = ({ type }: { type: string }) => {
 const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
+  const [itemOwnership, setItemOwnership] = useState<Record<number, boolean>>({});
+  const { contract } = useContract();
+  const { address } = useAccount();
 
   useEffect(() => {
     const loadItems = async () => {
@@ -110,6 +117,33 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
 
     loadItems();
   }, []);
+
+  // Check ownership for all items
+  useEffect(() => {
+    const checkOwnership = async () => {
+      if (!contract || !address) return;
+
+      const ownershipPromises = items.map(async (item) => {
+        try {
+          const balance = await contract.balanceOf(address, item.id);
+          return { itemId: item.id, isOwned: balance > 0n };
+        } catch (error) {
+          console.error(`Error checking ownership for item ${item.id}:`, error);
+          return { itemId: item.id, isOwned: false };
+        }
+      });
+
+      const results = await Promise.all(ownershipPromises);
+      const ownershipMap = results.reduce((acc, { itemId, isOwned }) => {
+        acc[itemId] = isOwned;
+        return acc;
+      }, {} as Record<number, boolean>);
+
+      setItemOwnership(ownershipMap);
+    };
+
+    checkOwnership();
+  }, [contract, address, items]);
 
   if (loading) {
     return (
@@ -126,8 +160,9 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
       {items.map((item) => (
         <div
           key={item.id}
-          className={`fortnite-item-cell ${selectedItemId === item.id ? "selected" : ""}`}
-          onClick={() => onSelectItem(item)}
+          className={`fortnite-item-cell ${selectedItemId === item.id ? "selected" : ""} 
+            ${!itemOwnership[item.id] ? "opacity-50" : ""}`}
+          onClick={() => itemOwnership[item.id] && onSelectItem(item)}
         >
           <div className="w-full h-full relative">
             <Canvas 
@@ -146,7 +181,7 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
                 castShadow
               />
               
-              <VoxelItem type={item.type} />
+              <VoxelItem type={item.type} isOwned={itemOwnership[item.id] || false} />
               <OrbitControls 
                 enableZoom={false}
                 enablePan={false}
