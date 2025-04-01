@@ -9,6 +9,7 @@ import AuthButton from "@/components/AuthButton";
 import { useAccount, useConnect } from "wagmi";
 import { metaMask } from "wagmi/connectors";
 import { useContract } from "@/context/ContractContext";
+import { toBigInt } from "ethers";
 
 const Index = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -49,7 +50,8 @@ const Index = () => {
 
         const ownershipPromises = items.map(async (item: Item) => {
           try {
-            const balance = await contract.balanceOf(address, item.id);
+            console.log(item.id)
+            const balance = await contract.balanceOf(address, (toBigInt)(item.id));
             return { itemId: item.id, isOwned: balance > 0n };
           } catch (error) {
             console.error(`Error checking ownership for item ${item.id}:`, error);

@@ -5,6 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import { Lock } from "lucide-react";
+import { useAccount } from "wagmi";
 
 interface ItemGridProps {
   onSelectItem: (item: Item) => void;
@@ -16,7 +17,7 @@ interface ItemGridProps {
 // VoxelItem component for rendering a single item in 3D
 const VoxelItem = ({ type, isOwned, isConnected }: { type: string; isOwned: boolean; isConnected: boolean }) => {
   const itemRef = useRef<THREE.Group>(null);
-  
+
   // Add rotation animation
   useFrame((state, delta) => {
     if (itemRef.current) {
