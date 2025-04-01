@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Item, equipItem, unequipItem, fetchCharacter } from "@/services/apiService";
@@ -6,7 +7,7 @@ import ItemGrid from "@/components/ItemGrid";
 import ItemDetails from "@/components/ItemDetails";
 import AuthButton from "@/components/AuthButton";
 import { useAccount, useConnect } from "wagmi";
-import { MetaMaskConnector } from "wagmi/connectors";
+import { metaMask } from "wagmi/connectors";
 import { useContract } from "@/context/ContractContext";
 
 const Index = () => {
@@ -114,7 +115,7 @@ const Index = () => {
   };
 
   const handleConnect = () => {
-    connect({ connector: new MetaMaskConnector() });
+    connect({ connector: metaMask() });
   };
 
   const isItemEquipped = (item: Item | null) => {

@@ -8,7 +8,7 @@ import { ContractProvider } from "@/context/ContractContext";
 import { WagmiConfig, createConfig } from "wagmi";
 import { hardhat } from "wagmi/chains";
 import { http } from "wagmi";
-import { MetaMaskConnector } from "wagmi/connectors";
+import { metaMask } from "wagmi/connectors";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -21,7 +21,7 @@ const config = createConfig({
     [hardhat.id]: http(),
   },
   connectors: [
-    new MetaMaskConnector()
+    metaMask()
   ],
 });
 

@@ -1,6 +1,6 @@
 
 import { useAccount, useConnect } from "wagmi";
-import { MetaMaskConnector } from "wagmi/connectors";
+import { metaMask } from "wagmi/connectors";
 import { Button } from "@/components/ui/button";
 import { Wallet } from "lucide-react";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ const AuthButton = () => {
 
   const handleConnect = async () => {
     try {
-      connect({ connector: new MetaMaskConnector() });
+      connect({ connector: metaMask() });
     } catch (error) {
       console.error("Failed to connect:", error);
       toast.error("Failed to connect to MetaMask");
