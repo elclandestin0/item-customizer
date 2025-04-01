@@ -1,35 +1,34 @@
-
-import { useState } from "react";
-import { Character as CharacterType, fetchCharacter, Item } from "@/services/apiService";
+import { useState, useEffect } from "react";
+import { Character as CharacterType, fetchCharacter } from "@/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import { Lock } from "lucide-react";
 
 interface CharacterProps {
   characterId: number;
   equippedItems: Record<string, number | null>;
+  isConnected: boolean;
 }
 
 // VoxelCharacter component to render the 3D character and its equipment
-const VoxelCharacter = ({ equippedItems }: { equippedItems: Record<string, number | null> }) => {
-  // Character should NOT rotate automatically, just be controllable with OrbitControls
+const VoxelCharacter = ({ equippedItems, isConnected }: { 
+  equippedItems: Record<string, number | null>;
+  isConnected: boolean;
+}) => {
   return (
     <group>
-      {/* Base Character */}
       <group>
-        {/* Head */}
         <mesh position={[0, 1.2, 0]}>
           <boxGeometry args={[0.8, 0.8, 0.8]} />
           <meshStandardMaterial color="#8899FF" />
         </mesh>
         
-        {/* Body */}
         <mesh position={[0, 0.4, 0]}>
           <boxGeometry args={[1, 1.2, 0.6]} />
           <meshStandardMaterial color="#5566AA" />
         </mesh>
         
-        {/* Arms */}
         <mesh position={[-0.6, 0.4, 0]}>
           <boxGeometry args={[0.2, 1, 0.2]} />
           <meshStandardMaterial color="#5566AA" />
@@ -39,7 +38,6 @@ const VoxelCharacter = ({ equippedItems }: { equippedItems: Record<string, numbe
           <meshStandardMaterial color="#5566AA" />
         </mesh>
         
-        {/* Legs */}
         <mesh position={[-0.3, -0.5, 0]}>
           <boxGeometry args={[0.3, 0.8, 0.3]} />
           <meshStandardMaterial color="#5566AA" />
@@ -50,8 +48,7 @@ const VoxelCharacter = ({ equippedItems }: { equippedItems: Record<string, numbe
         </mesh>
       </group>
       
-      {/* Render equipped items */}
-      {Object.entries(equippedItems).map(([type, item]) => {
+      {isConnected && Object.entries(equippedItems).map(([type, item]) => {
         if (!item) return null;
         
         switch (type) {
@@ -111,21 +108,29 @@ const VoxelCharacter = ({ equippedItems }: { equippedItems: Record<string, numbe
   );
 };
 
-const Character = ({ characterId, equippedItems }: CharacterProps) => {
+const Character = ({ characterId, equippedItems, isConnected }: CharacterProps) => {
   const [character, setCharacter] = useState<CharacterType | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch character data for name and level, but use the provided equippedItems
-  useState(() => {
+  useEffect(() => {
     const loadCharacter = async () => {
       setLoading(true);
-      const fetchedCharacter = await fetchCharacter(characterId);
-      setCharacter(fetchedCharacter);
+      if (isConnected) {
+        const fetchedCharacter = await fetchCharacter(characterId);
+        setCharacter(fetchedCharacter);
+      } else {
+        setCharacter({
+          id: characterId,
+          name: "Guest",
+          level: 1,
+          equippedItems: {}
+        });
+      }
       setLoading(false);
     };
 
     loadCharacter();
-  });
+  }, [characterId, isConnected]);
 
   if (loading) {
     return <Skeleton className="w-full h-64 rounded-none" />;
@@ -137,14 +142,22 @@ const Character = ({ characterId, equippedItems }: CharacterProps) => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <h2 className="text-2xl font-bold text-white mb-2">{character.name} - Level {character.level}</h2>
+      <h2 className="text-2xl font-bold text-white mb-2">
+        {character.name} {isConnected ? `- Level ${character.level}` : ""}
+        {!isConnected && <span className="text-sm ml-2 font-normal text-blue-300">(Not Connected)</span>}
+      </h2>
       
       <div className="relative flex-grow">
+        {!isConnected && (
+          <div className="absolute top-2 right-2 z-10 bg-black bg-opacity-60 rounded-full p-2">
+            <Lock size={20} className="text-white" />
+          </div>
+        )}
+        
         <Canvas
           camera={{ position: [0, 1, 5], fov: 50 }}
           className="!bg-transparent"
         >
-          {/* Enhanced lighting for character */}
           <ambientLight intensity={0.7} />
           <pointLight position={[10, 10, 10]} intensity={0.8} />
           <pointLight position={[-10, -10, -10]} intensity={0.5} />
@@ -161,7 +174,7 @@ const Character = ({ characterId, equippedItems }: CharacterProps) => {
             castShadow
           />
           
-          <VoxelCharacter equippedItems={equippedItems} />
+          <VoxelCharacter equippedItems={equippedItems} isConnected={isConnected} />
           
           <OrbitControls 
             enableZoom={true}

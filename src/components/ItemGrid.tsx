@@ -4,15 +4,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import { useContract } from "@/context/ContractContext";
+import { Lock } from "lucide-react";
 
 interface ItemGridProps {
   onSelectItem: (item: Item) => void;
   selectedItemId: number | null;
+  itemOwnership: Record<number, boolean>;
+  isConnected: boolean;
 }
 
 // VoxelItem component for rendering a single item in 3D
-const VoxelItem = ({ type, isOwned }: { type: string; isOwned: boolean }) => {
+const VoxelItem = ({ type, isOwned, isConnected }: { type: string; isOwned: boolean; isConnected: boolean }) => {
   const itemRef = useRef<THREE.Group>(null);
   
   // Add rotation animation
@@ -24,9 +26,10 @@ const VoxelItem = ({ type, isOwned }: { type: string; isOwned: boolean }) => {
 
   // Set up different geometries based on item type
   const getItemMesh = () => {
-    const materialProps = isOwned 
-      ? { color: "#FFFFFF" }
-      : { color: "#666666", transparent: true, opacity: 0.5 };
+    // Determine material properties based on connection and ownership
+    const materialProps = isConnected 
+      ? (isOwned ? { color: "#FFFFFF" } : { color: "#888888", transparent: true, opacity: 0.6 })
+      : { color: "#AAAAAA", transparent: true, opacity: 0.8 };  // Not connected, show as semi-locked
 
     switch (type) {
       case "head":
@@ -100,12 +103,9 @@ const VoxelItem = ({ type, isOwned }: { type: string; isOwned: boolean }) => {
   );
 };
 
-const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
+const ItemGrid = ({ onSelectItem, selectedItemId, itemOwnership, isConnected }: ItemGridProps) => {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
-  const [itemOwnership, setItemOwnership] = useState<Record<number, boolean>>({});
-  const { contract } = useContract();
-  const { address } = useAccount();
 
   useEffect(() => {
     const loadItems = async () => {
@@ -117,33 +117,6 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
 
     loadItems();
   }, []);
-
-  // Check ownership for all items
-  useEffect(() => {
-    const checkOwnership = async () => {
-      if (!contract || !address) return;
-
-      const ownershipPromises = items.map(async (item) => {
-        try {
-          const balance = await contract.balanceOf(address, item.id);
-          return { itemId: item.id, isOwned: balance > 0n };
-        } catch (error) {
-          console.error(`Error checking ownership for item ${item.id}:`, error);
-          return { itemId: item.id, isOwned: false };
-        }
-      });
-
-      const results = await Promise.all(ownershipPromises);
-      const ownershipMap = results.reduce((acc, { itemId, isOwned }) => {
-        acc[itemId] = isOwned;
-        return acc;
-      }, {} as Record<number, boolean>);
-
-      setItemOwnership(ownershipMap);
-    };
-
-    checkOwnership();
-  }, [contract, address, items]);
 
   if (loading) {
     return (
@@ -160,9 +133,9 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
       {items.map((item) => (
         <div
           key={item.id}
-          className={`fortnite-item-cell ${selectedItemId === item.id ? "selected" : ""} 
-            ${!itemOwnership[item.id] ? "opacity-50" : ""}`}
-          onClick={() => itemOwnership[item.id] && onSelectItem(item)}
+          className={`fortnite-item-cell relative ${selectedItemId === item.id ? "selected" : ""} 
+            ${isConnected && !itemOwnership[item.id] ? "opacity-70" : ""}`}
+          onClick={() => onSelectItem(item)}
         >
           <div className="w-full h-full relative">
             <Canvas 
@@ -181,7 +154,11 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
                 castShadow
               />
               
-              <VoxelItem type={item.type} isOwned={itemOwnership[item.id] || false} />
+              <VoxelItem 
+                type={item.type} 
+                isOwned={isConnected && (itemOwnership[item.id] || false)} 
+                isConnected={isConnected} 
+              />
               <OrbitControls 
                 enableZoom={false}
                 enablePan={false}
@@ -192,6 +169,20 @@ const ItemGrid = ({ onSelectItem, selectedItemId }: ItemGridProps) => {
             <div className="absolute bottom-0 left-0 right-0 bg-[#7e22ce] h-6">
               <p className="text-xs text-white font-bold truncate px-1">{item.name}</p>
             </div>
+            
+            {/* Show lock icon for items the user doesn't own when connected */}
+            {isConnected && !itemOwnership[item.id] && (
+              <div className="absolute top-1 right-1 bg-black bg-opacity-60 rounded-full p-1">
+                <Lock size={12} className="text-white" />
+              </div>
+            )}
+            
+            {/* Show lock icon for all items when not connected */}
+            {!isConnected && (
+              <div className="absolute top-1 right-1 bg-black bg-opacity-60 rounded-full p-1">
+                <Lock size={12} className="text-white" />
+              </div>
+            )}
           </div>
         </div>
       ))}
