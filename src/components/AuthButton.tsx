@@ -1,6 +1,6 @@
 
 import { useAccount, useConnect } from "wagmi";
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+import { MetaMaskConnector } from "wagmi/connectors";
 import { Button } from "@/components/ui/button";
 import { Wallet } from "lucide-react";
 import { toast } from "sonner";

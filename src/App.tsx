@@ -1,29 +1,28 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ContractProvider } from "@/context/ContractContext";
-import { WagmiConfig, createConfig, configureChains } from "wagmi";
+import { WagmiConfig, createConfig } from "wagmi";
 import { hardhat } from "wagmi/chains";
-import { publicProvider } from "wagmi/providers/public";
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+import { http } from "wagmi";
+import { MetaMaskConnector } from "wagmi/connectors";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Configure chains & providers
-const { chains, publicClient } = configureChains(
-  [hardhat],
-  [publicProvider()]
-);
-
-// Set up wagmi config
+// Set up wagmi config for Wagmi v2
 const config = createConfig({
-  autoConnect: true,
-  connectors: [new MetaMaskConnector({ chains })],
-  publicClient,
+  chains: [hardhat],
+  transports: {
+    [hardhat.id]: http(),
+  },
+  connectors: [
+    new MetaMaskConnector()
+  ],
 });
 
 const App = () => (

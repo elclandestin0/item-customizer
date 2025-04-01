@@ -1,3 +1,4 @@
+
 import { ethers } from 'ethers';
 import ERC1155_ABI from './abi/ERC1155.json';
 
@@ -23,16 +24,16 @@ export const getTokenContract = () => {
 
 // Optional: Function to get a signer instance for transactions
 export const getTokenContractWithSigner = async () => {
-  if (!window.ethereum) {
-    throw new Error("Please install MetaMask!");
+  if (typeof window !== 'undefined' && window.ethereum) {
+    const provider = new ethers.BrowserProvider(window.ethereum as any);
+    const signer = await provider.getSigner();
+    
+    return new ethers.Contract(
+      CONTRACT_ADDRESS,
+      ERC1155_ABI,
+      signer
+    );
   }
-
-  const provider = new ethers.BrowserProvider(window.ethereum);
-  const signer = await provider.getSigner();
   
-  return new ethers.Contract(
-    CONTRACT_ADDRESS,
-    ERC1155_ABI,
-    signer
-  );
+  throw new Error("Please install MetaMask!");
 }; 

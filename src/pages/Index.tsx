@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Item, equipItem, unequipItem, fetchCharacter } from "@/services/apiService";
@@ -7,7 +6,7 @@ import ItemGrid from "@/components/ItemGrid";
 import ItemDetails from "@/components/ItemDetails";
 import AuthButton from "@/components/AuthButton";
 import { useAccount, useConnect } from "wagmi";
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+import { MetaMaskConnector } from "wagmi/connectors";
 import { useContract } from "@/context/ContractContext";
 
 const Index = () => {
@@ -21,7 +20,6 @@ const Index = () => {
 
   const characterId = 1; // Hardcoded for simplicity
 
-  // Load character data on initial render or when address changes
   useEffect(() => {
     const loadCharacter = async () => {
       if (isConnected && address) {
@@ -30,7 +28,6 @@ const Index = () => {
           setEquippedItems(fetchedCharacter.equippedItems);
         }
       } else {
-        // Reset equipped items when disconnected
         setEquippedItems({});
       }
     };
@@ -38,16 +35,14 @@ const Index = () => {
     loadCharacter();
   }, [characterId, isConnected, address]);
 
-  // Check ownership for items when connected
   useEffect(() => {
     const checkOwnership = async () => {
       if (!contract || !address || !isConnected) {
-        setItemOwnership({}); // Reset ownership when not connected
+        setItemOwnership({});
         return;
       }
 
       try {
-        // Get all items from ItemGrid component (assuming this data is fetched there)
         const itemsResponse = await fetch("http://localhost:4000/api/items");
         const items = await itemsResponse.json();
 
@@ -94,7 +89,6 @@ const Index = () => {
 
     const success = await equipItem(characterId, item.type, item.id);
     if (success) {
-      // Update local state immediately
       setEquippedItems(prev => ({
         ...prev,
         [item.type]: item.id
@@ -111,7 +105,6 @@ const Index = () => {
 
     const success = await unequipItem(characterId, item.type);
     if (success) {
-      // Update local state immediately
       setEquippedItems(prev => ({
         ...prev,
         [item.type]: null
